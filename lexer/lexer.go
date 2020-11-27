@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"Flipbook/token"
+	"strings"
 )
 
 type Lexer struct {
@@ -35,10 +36,17 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.RBRACE, l.ch)
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
-	case '-':
-		tok = newToken(token.MINUS, l.ch)
 	case ',':
 		tok = newToken(token.COMMA, l.ch)
+	case '"':
+		fname := l.readFilename()
+		if fname == "" {
+			tok := newToken(token.ILLEGAL, l.ch)
+			return tok
+		}
+		tok.Type = token.FILENAME
+		tok.Literal = fname
+
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -73,6 +81,24 @@ func (l *Lexer) readChar() {
 	l.position += 1
 }
 
+func (l *Lexer) readFilename() string {
+	prevPos := l.prevPosition
+	for {
+		l.readChar()
+		if l.ch == '"' || l.ch == 0 {
+			break
+		}
+	}
+	fname := l.input[prevPos:l.prevPosition]
+	split := strings.Split(fname, ".")
+	if len(split) != 2 {
+		return ""
+	}
+	if !(split[1] == "jpeg" || split[1] == "png" || split[1] == "jpg") {
+		return ""
+	}
+	return l.input[prevPos:l.prevPosition]
+}
 func (l *Lexer) readIdentifier() string {
 	prevPos := l.prevPosition
 	for isLetter(l.ch) {
@@ -88,8 +114,9 @@ func (l *Lexer) readNum() string {
 	}
 	return l.input[prevPos:l.prevPosition]
 }
+
 func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '.'
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
 func isDigit(ch byte) bool {

@@ -5,6 +5,7 @@ import (
 	"Flipbook/lexer"
 	"Flipbook/token"
 	"fmt"
+	"strconv"
 )
 
 type Parser struct {
@@ -75,8 +76,51 @@ func (p *Parser) parseNewStatement() *ast.NewStatement {
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
-	for !p.curTokenIs(token.SEMICOLON) {
-		p.nextToken()
+
+	if !p.expectPeek(token.LBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.LBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	st.DimX = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	if !p.expectPeek(token.COMMA) {
+		return nil
+	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	st.DimY = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.COMMA) {
+		return nil
+	}
+	//if the new object is book
+	if st.DType.Token.Type == token.BOOK {
+		if !p.expectPeek(token.INT) {
+			return nil
+		}
+		st.Attribute = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	} else {
+		//if the new object is image
+		if !p.expectPeek(token.FILENAME) {
+			return nil
+		}
+		st.Attribute = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	}
+
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.SEMICOLON) {
+		return nil
 	}
 	return st
 }
@@ -87,7 +131,6 @@ func (p *Parser) parseSetStatement() *ast.SetStatement {
 	if !(p.expectPeek(token.IDN)) {
 		return nil
 	}
-
 	st.Object = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 	if !p.expectPeek(token.SCALE, token.POSITION) {
 		return nil
@@ -127,6 +170,11 @@ func (p *Parser) parseKeyFrameStatement() *ast.KeyframeStatement {
 	}
 	st.Image = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
+	if !(p.expectPeek(token.IDN)) {
+		return nil
+	}
+	st.Book = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
 	if !p.expectPeek(token.SCALE, token.POSITION) {
 		return nil
 	}
@@ -141,7 +189,7 @@ func (p *Parser) parseKeyFrameStatement() *ast.KeyframeStatement {
 func (p *Parser) parseSaveStatement() *ast.SaveStatement {
 	st := &ast.SaveStatement{Token: p.curToken}
 
-	if !(p.expectPeek(token.BOOK)) {
+	if !(p.expectPeek(token.IDN)) {
 		return nil
 	}
 	st.Book = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
@@ -150,6 +198,19 @@ func (p *Parser) parseSaveStatement() *ast.SaveStatement {
 		p.nextToken()
 	}
 	return st
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.curToken}
+
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+	lit.Value = value
+	return lit
 }
 
 //Helper Functions

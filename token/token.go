@@ -11,8 +11,9 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	IDN = "IDN"
-	INT = "INT"
+	IDN      = "IDN"
+	INT      = "INT"
+	FILENAME = "FILENAME"
 
 	//operators
 	ASSIGN = "="
@@ -38,7 +39,6 @@ const (
 	IMAGE    = "IMAGE"
 	PAGE     = "PAGE"
 	BOOK     = "BOOK"
-	STRING   = "STRING"
 	SCALE    = "SCALE"
 	POSITION = "POSITION"
 	INSERT   = "INSERT"

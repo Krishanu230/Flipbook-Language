@@ -13,6 +13,7 @@ type Statement interface {
 	statementNode()
 }
 
+//// TODO: Add expression parsing support
 type Expression interface {
 	Node
 	expressionNode()
@@ -30,11 +31,29 @@ func (p *Program) TokenLiteral() string {
 	}
 }
 
-type NewStatement struct {
+type IntegerLiteral struct {
 	Token token.Token
-	Name  *Identifier
-	DType *Identifier
-	Value Expression
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode()      {}
+func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+
+type StringLiteral struct {
+	Token token.Token
+	Value string
+}
+
+func (sl *StringLiteral) expressionNode()      {}
+func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
+
+type NewStatement struct {
+	Token     token.Token
+	Name      *Identifier
+	DType     *Identifier
+	DimX      *Identifier
+	DimY      *Identifier
+	Attribute *Identifier
 }
 
 func (ns *NewStatement) statementNode()       {}
@@ -44,7 +63,7 @@ type SetStatement struct {
 	Token    token.Token
 	Object   *Identifier
 	Property *Identifier
-	Value    Expression
+	Value    *Identifier
 }
 
 func (ss *SetStatement) statementNode()       {}
@@ -54,9 +73,9 @@ type InsertStatement struct {
 	Token     token.Token
 	Image     *Identifier
 	Book      *Identifier
-	StartPage Expression
-	EndPage   Expression
-	Position  Expression
+	StartPage *Identifier
+	EndPage   *Identifier
+	Position  *Identifier
 }
 
 func (is *InsertStatement) statementNode()       {}
@@ -65,11 +84,12 @@ func (is *InsertStatement) TokenLiteral() string { return is.Token.Literal }
 type KeyframeStatement struct {
 	Token         token.Token
 	Image         *Identifier
+	Book          *Identifier
 	Property      *Identifier
-	StartPage     Expression
-	StartProperty Expression
-	EndPage       Expression
-	EndProperty   Expression
+	StartPage     *Identifier
+	StartProperty *Identifier
+	EndPage       *Identifier
+	EndProperty   *Identifier
 }
 
 func (kfs *KeyframeStatement) statementNode()       {}
