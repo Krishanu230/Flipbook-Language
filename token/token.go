@@ -60,6 +60,7 @@ var keywords = map[string]TokenType{
 	"page":     PAGE,
 	"keyframe": KEYFRAME,
 	"save":     SAVE,
+	"position": POSITION,
 }
 
 func LookupIdent(iden string) TokenType {
