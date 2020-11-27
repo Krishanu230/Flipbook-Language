@@ -11,12 +11,8 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	IDN    = "IDN"
-	INT    = "INT"
-	IMAGE  = "IMAGE"
-	PAGE   = "PAGE"
-	BOOK   = "BOOK"
-	STRING = "STRING"
+	IDN = "IDN"
+	INT = "INT"
 
 	//operators
 	ASSIGN = "="
@@ -33,23 +29,37 @@ const (
 	RBRACE   = "}"
 
 	//KeyWords
-	EFFECT  = "EFFECT"
-	NEW     = "NEW"
-	AT      = "AT"
-	IN      = "IN"
-	SET     = "SET"
-	PAGECNT = "PAGECNT"
+	EFFECT   = "EFFECT"
+	NEW      = "NEW"
+	FROM     = "FROM"
+	AT       = "AT"
+	TO       = "TO"
+	SET      = "SET"
+	IMAGE    = "IMAGE"
+	PAGE     = "PAGE"
+	BOOK     = "BOOK"
+	STRING   = "STRING"
+	SCALE    = "SCALE"
+	POSITION = "POSITION"
+	INSERT   = "INSERT"
+	KEYFRAME = "KEYFRAME"
+	SAVE     = "SAVE"
 )
 
 var keywords = map[string]TokenType{
-	"effect":    EFFECT,
-	"new":       NEW,
-	"at":        AT,
-	"in":        IN,
-	"set":       SET,
-	"pageCount": PAGECNT,
-	"image":     IMAGE,
-	"book":      BOOK,
+	"effect":   EFFECT,
+	"new":      NEW,
+	"at":       AT,
+	"to":       TO,
+	"set":      SET,
+	"image":    IMAGE,
+	"book":     BOOK,
+	"scale":    SCALE,
+	"insert":   INSERT,
+	"from":     FROM,
+	"page":     PAGE,
+	"keyframe": KEYFRAME,
+	"save":     SAVE,
 }
 
 func LookupIdent(iden string) TokenType {

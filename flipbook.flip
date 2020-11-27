@@ -1,3 +1,6 @@
-new image img = krishanu.jpg;
-new book b = 30 30
-set b pageCount 10
+new book bookone = (10,20) 30;
+new image img = (20,30) krishanu.jpeg;
+set img scale 10;
+insert img book1 from page 1 to 10 at (0,0);
+keyframe img scale (1,50) to (2,100);
+save f1;

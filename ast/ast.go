@@ -33,6 +33,7 @@ func (p *Program) TokenLiteral() string {
 type NewStatement struct {
 	Token token.Token
 	Name  *Identifier
+	DType *Identifier
 	Value Expression
 }
 

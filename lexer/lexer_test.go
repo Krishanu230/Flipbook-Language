@@ -6,9 +6,9 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `new image img = krishanu.jpg;
-  new book b = 30 30
-  set b pageCount 10
+	input := `new book bookone (10,20) 30;
+  new image img (20,30) krishanu.jpg;
+  set img scale 10;
   `
 
 	tests := []struct {
@@ -16,21 +16,30 @@ func TestNextToken(t *testing.T) {
 		expectedLiteral string
 	}{
 		{token.NEW, "new"},
-		{token.IMAGE, "image"},
-		{token.IDN, "img"},
-		{token.ASSIGN, "="},
-		{token.IDN, "krishanu.jpg"},
+		{token.BOOK, "book"},
+		{token.IDN, "bookone"},
+		{token.LBRACKET, "("},
+		{token.INT, "10"},
+		{token.COMMA, ","},
+		{token.INT, "20"},
+		{token.RBRACKET, ")"},
+		{token.INT, "30"},
 		{token.SEMICOLON, ";"},
 		{token.NEW, "new"},
-		{token.BOOK, "book"},
-		{token.IDN, "b"},
-		{token.ASSIGN, "="},
+		{token.IMAGE, "image"},
+		{token.IDN, "img"},
+		{token.LBRACKET, "("},
+		{token.INT, "20"},
+		{token.COMMA, ","},
 		{token.INT, "30"},
-		{token.INT, "30"},
+		{token.RBRACKET, ")"},
+		{token.IDN, "krishanu.jpg"},
+		{token.SEMICOLON, ";"},
 		{token.SET, "set"},
-		{token.IDN, "b"},
-		{token.PAGECNT, "pageCount"},
+		{token.IDN, "img"},
+		{token.SCALE, "scale"},
 		{token.INT, "10"},
+		{token.SEMICOLON, ";"},
 	}
 
 	l := NewLexer(input)
