@@ -1,5 +1,7 @@
 package object
 
+import "fmt"
+
 func NewEnvironment() *Environment {
 	s := make(map[string]Object)
 	return &Environment{store: s}
@@ -15,6 +17,11 @@ func (e *Environment) Get(name string) (Object, bool) {
 }
 
 func (e *Environment) Set(name string, val Object) Object {
+	//fmt.Printf("name: %s type %T\n", name, val)
 	e.store[name] = val
 	return val
+}
+
+func (e *Environment) Print() {
+	fmt.Println(e.store)
 }

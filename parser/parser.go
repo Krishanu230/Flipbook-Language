@@ -67,7 +67,7 @@ func (p *Parser) parseNewStatement() *ast.NewStatement {
 	if !(p.expectPeek(token.BOOK, token.IMAGE)) {
 		return nil
 	}
-	st.DType = &ast.Identifier{Token: p.curToken, Value: ""}
+	st.DType = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 	if !p.expectPeek(token.IDN) {
 		return nil
 	}
@@ -86,7 +86,12 @@ func (p *Parser) parseNewStatement() *ast.NewStatement {
 	if !p.expectPeek(token.INT) {
 		return nil
 	}
-	st.DimX = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	val := p.parseIntegerLiteral()
+	if val != nil {
+		st.DimX = val
+	} else {
+		return nil
+	}
 
 	if !p.expectPeek(token.COMMA) {
 		return nil
@@ -94,7 +99,12 @@ func (p *Parser) parseNewStatement() *ast.NewStatement {
 	if !p.expectPeek(token.INT) {
 		return nil
 	}
-	st.DimY = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	val = p.parseIntegerLiteral()
+	if val != nil {
+		st.DimY = val
+	} else {
+		return nil
+	}
 
 	if !p.expectPeek(token.RBRACKET) {
 		return nil
@@ -131,7 +141,7 @@ func (p *Parser) parseSetStatement() *ast.SetStatement {
 	if !(p.expectPeek(token.IDN)) {
 		return nil
 	}
-	st.Object = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	st.Target = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 	if !p.expectPeek(token.SCALE, token.POSITION) {
 		return nil
 	}
@@ -156,8 +166,70 @@ func (p *Parser) parseInsertStatement() *ast.InsertStatement {
 	}
 	st.Book = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
-	for !p.curTokenIs(token.SEMICOLON) {
-		p.nextToken()
+	if !p.expectPeek(token.FROM) {
+		return nil
+	}
+	if !p.expectPeek(token.PAGE) {
+		return nil
+	}
+
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	val := p.parseIntegerLiteral()
+	if val != nil {
+		st.StartPage = val
+	} else {
+		return nil
+	}
+
+	if !p.expectPeek(token.TO) {
+		return nil
+	}
+
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	val = p.parseIntegerLiteral()
+	if val != nil {
+		st.EndPage = val
+	} else {
+		return nil
+	}
+
+	if !p.expectPeek(token.AT) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	val = p.parseIntegerLiteral()
+	if val != nil {
+		st.PositionX = val
+	} else {
+		return nil
+	}
+	if !p.expectPeek(token.COMMA) {
+		return nil
+	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	val = p.parseIntegerLiteral()
+	if val != nil {
+		st.PositionY = val
+	} else {
+		return nil
+	}
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.SEMICOLON) {
+		return nil
 	}
 	return st
 }
@@ -200,16 +272,16 @@ func (p *Parser) parseSaveStatement() *ast.SaveStatement {
 	return st
 }
 
-func (p *Parser) parseIntegerLiteral() ast.Expression {
+func (p *Parser) parseIntegerLiteral() *ast.IntegerLiteral {
 	lit := &ast.IntegerLiteral{Token: p.curToken}
 
-	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 0)
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
 		p.errors = append(p.errors, msg)
 		return nil
 	}
-	lit.Value = value
+	lit.Value = int(value)
 	return lit
 }
 

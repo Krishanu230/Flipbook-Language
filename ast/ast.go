@@ -33,7 +33,7 @@ func (p *Program) TokenLiteral() string {
 
 type IntegerLiteral struct {
 	Token token.Token
-	Value int64
+	Value int
 }
 
 func (il *IntegerLiteral) expressionNode()      {}
@@ -51,8 +51,8 @@ type NewStatement struct {
 	Token     token.Token
 	Name      *Identifier
 	DType     *Identifier
-	DimX      *Identifier
-	DimY      *Identifier
+	DimX      *IntegerLiteral
+	DimY      *IntegerLiteral
 	Attribute *Identifier
 }
 
@@ -61,9 +61,9 @@ func (ns *NewStatement) TokenLiteral() string { return ns.Token.Literal }
 
 type SetStatement struct {
 	Token    token.Token
-	Object   *Identifier
+	Target   *Identifier
 	Property *Identifier
-	Value    *Identifier
+	Value    *IntegerLiteral
 }
 
 func (ss *SetStatement) statementNode()       {}
@@ -73,9 +73,10 @@ type InsertStatement struct {
 	Token     token.Token
 	Image     *Identifier
 	Book      *Identifier
-	StartPage *Identifier
-	EndPage   *Identifier
-	Position  *Identifier
+	StartPage *IntegerLiteral
+	EndPage   *IntegerLiteral
+	PositionX *IntegerLiteral
+	PositionY *IntegerLiteral
 }
 
 func (is *InsertStatement) statementNode()       {}

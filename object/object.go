@@ -1,6 +1,8 @@
 package object
 
-import "Flipbook/object"
+import (
+	"strconv"
+)
 
 type ObjectType string
 
@@ -9,10 +11,6 @@ const (
 	ERROR_OBJ = "ERROR"
 	IMAGE_OBJ = "IMAGE"
 	BOOK_OBJ  = "BOOK"
-)
-
-var (
-	NULL = &object.Null{}
 )
 
 type Object interface {
@@ -40,20 +38,39 @@ type Image struct {
 
 func (e *Image) Type() ObjectType { return IMAGE_OBJ }
 func (e *Image) Inspect() string {
-	return "Image: " + e.Filename + " dim: " + string(e.DimX) + ", " + string(e.DimY)
+	dx := strconv.Itoa(e.DimX)
+	dy := strconv.Itoa(e.DimY)
+	return "Image: " + e.Filename + " dim: " + dx + ", " + dy
 }
 
 type Book struct {
-	Bookname   string
 	DimX       int
 	DimY       int
 	CountPages int
-	Pages      map[int]PageProperty
+	Pages      []PageProperty
 }
 
 func (e *Book) Type() ObjectType { return BOOK_OBJ }
 func (e *Book) Inspect() string {
-	return "Book: " + e.Bookname + " dim: " + string(e.DimX) + ", " + string(e.DimY) + " PagesCount: " + string(e.CountPages)
+	return "Bookdim: " + strconv.Itoa(e.DimX) + ", " + strconv.Itoa(e.DimY) + " PagesCount: " + strconv.Itoa(e.CountPages)
+}
+
+func NewBook(dimX int, dimY int, pCount string) *Book {
+	pcnt, _ := strconv.Atoi(pCount)
+	pages := []PageProperty{}
+	i := 0
+	for i < pcnt {
+		blankPage := []ImageProperty{}
+		pages =append(pages, PageProperty{ImagesProps: blankPage})
+		i += 1
+	}
+	b := &Book{
+		DimX:       dimX,
+		DimY:       dimY,
+		CountPages: pcnt,
+		Pages:      pages,
+	}
+	return b
 }
 
 type PageProperty struct {

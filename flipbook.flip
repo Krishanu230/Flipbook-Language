@@ -1,6 +1,5 @@
 new book bookone = ((10,20), 30);
 new image img = ((20,30), "krishanu.jpeg");
-set img scale 10;
 insert img bookone from page 1 to 10 at (0,0);
 keyframe img bookone scale (1,50) to (2,100);
 save bookone;
