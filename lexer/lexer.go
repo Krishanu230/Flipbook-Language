@@ -100,6 +100,7 @@ func (l *Lexer) readFilename() string {
 	}
 	return l.input[prevPos+1 : l.prevPosition]
 }
+
 func (l *Lexer) readIdentifier() string {
 	prevPos := l.prevPosition
 	for isLetter(l.ch) {

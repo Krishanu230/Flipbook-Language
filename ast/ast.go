@@ -23,6 +23,7 @@ type Program struct {
 	Statements []Statement
 }
 
+//for debugging puposes
 func (p *Program) TokenLiteral() string {
 	if len(p.Statements) > 0 {
 		return p.Statements[0].TokenLiteral()
@@ -36,6 +37,7 @@ type IntegerLiteral struct {
 	Value int
 }
 
+//implement the expression interface
 func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 
@@ -44,6 +46,7 @@ type StringLiteral struct {
 	Value string
 }
 
+//implement the expression interface
 func (sl *StringLiteral) expressionNode()      {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
 
@@ -56,6 +59,7 @@ type NewStatement struct {
 	Attribute *Identifier
 }
 
+//implement the statement interface
 func (ns *NewStatement) statementNode()       {}
 func (ns *NewStatement) TokenLiteral() string { return ns.Token.Literal }
 

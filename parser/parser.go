@@ -21,6 +21,7 @@ func NewParser(l *lexer.Lexer) *Parser {
 		l:      l,
 		errors: []string{},
 	}
+	//read two fill up the current and peek tokens
 	p.nextToken()
 	p.nextToken()
 	return p
@@ -62,6 +63,7 @@ func (p *Parser) parseStatement() ast.Statement {
 	}
 }
 
+//specific statement parsers
 func (p *Parser) parseNewStatement() *ast.NewStatement {
 	st := &ast.NewStatement{Token: p.curToken}
 

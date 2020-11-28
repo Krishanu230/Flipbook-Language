@@ -22,6 +22,7 @@ func (e *Environment) Set(name string, val Object) Object {
 	return val
 }
 
+//For debugging help
 func (e *Environment) Print() {
 	fmt.Println(e.store)
 }

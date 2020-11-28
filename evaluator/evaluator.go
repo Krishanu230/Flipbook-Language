@@ -14,6 +14,7 @@ var (
 	NULL = &object.Null{}
 )
 
+//eval a ast node. recursive nature
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
 
@@ -50,6 +51,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	return nil
 }
 
+//eval a bunch of statements by passing them to Eval()
 func evalStatements(sts []ast.Statement, env *object.Environment) object.Object {
 	var result object.Object
 
@@ -60,6 +62,7 @@ func evalStatements(sts []ast.Statement, env *object.Environment) object.Object 
 	return result
 }
 
+//resolve an identifier
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if ok {
@@ -68,6 +71,7 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	return newError("identifier not found: " + node.Value)
 }
 
+//evaluate New type of statements
 func evalNew(inp *ast.NewStatement, env *object.Environment) object.Object {
 	st := *inp
 	if st.DType.Value == "image" {
@@ -85,6 +89,7 @@ func evalNew(inp *ast.NewStatement, env *object.Environment) object.Object {
 	return &object.Null{}
 }
 
+//evaluate Insert statements
 func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object {
 	//env.Print()
 	r := evalIdentifier(inp.Image, env)
@@ -103,7 +108,9 @@ func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object
 	posx := inp.PositionX.Value
 	posy := inp.PositionY.Value
 
+	//for all pages in range
 	for i := pgs - 1; i <= pge-1; i++ {
+		//add the image to the image array of the page
 		imgprop := object.ImageProperty{
 			Image: *img,
 			Scale: 100,
@@ -118,6 +125,7 @@ func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object
 	return &object.Null{}
 }
 
+//evaluate keyframe statements
 func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Object {
 	r := evalIdentifier(inp.Image, env)
 	img, ok := r.(*object.Image)
@@ -136,12 +144,16 @@ func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Ob
 	sProp := inp.StartProperty.Value
 	eProp := inp.EndProperty.Value
 
+	//get the linear rate of change of property
 	delProp := eProp - sProp
 	delPgCount := pge - pgs + 1
 	slope := int(delProp / delPgCount)
 
-	for i := pgs - 1; i < pge-1; i++ {
+	//for all pages in range
+	for i := pgs - 1; i <= pge-1; i++ {
+		//check all the images in the image array of a page
 		for imgNo, imgitr := range book.Pages[i].ImagesProps {
+			//if the image exists on the page update the property
 			if imgitr.Image.Filename == img.Filename {
 				switch prop {
 				case "scale":
@@ -158,7 +170,6 @@ func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Ob
 					book.Pages[i].ImagesProps[imgNo] = orgImg
 				}
 			}
-
 		}
 	}
 
@@ -177,10 +188,12 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 
 	pdf := gopdf.GoPdf{}
 	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(pw), H: float64(ph)}})
+
 	for pno, page := range book.Pages {
 		pdf.AddPage()
 		for _, img := range page.ImagesProps {
 			imgpath := img.Image.Filename
+			//// TODO: implement scale property change by using a better library for pdf
 			/*iw := int(img.Image.DimX * (0))
 			ih := int(img.Image.DimX * (0))
 

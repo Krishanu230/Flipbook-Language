@@ -56,6 +56,8 @@ func (e *Book) Inspect() string {
 	return "Bookdim: " + strconv.Itoa(e.DimX) + ", " + strconv.Itoa(e.DimY) + " PagesCount: " + strconv.Itoa(e.CountPages)
 
 }
+
+//Debugging Helper function
 func (e *Book) PrintPagesMetadata() {
 	for i, page := range e.Pages {
 		fmt.Printf("\nPage no %d", i)
@@ -65,6 +67,7 @@ func (e *Book) PrintPagesMetadata() {
 	}
 }
 
+//returns a blank new book
 func NewBook(dimX int, dimY int, pCount string) *Book {
 	pcnt, _ := strconv.Atoi(pCount)
 	pages := []PageProperty{}
@@ -83,10 +86,12 @@ func NewBook(dimX int, dimY int, pCount string) *Book {
 	return b
 }
 
+//every page is just a collection of images it contains.
 type PageProperty struct {
 	ImagesProps []ImageProperty
 }
 
+//every image obj in book's pages is a wrapper around image type
 type ImageProperty struct {
 	Image Image
 	Scale int
