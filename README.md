@@ -23,24 +23,39 @@ go run main.go flipbook.flip
 
 ### Rules:
 1. There are two type of objects in this language: Book and Image.
+
 2. Modifiable Properties of Objects:
+
     2.1 Book: it has no public properties that can be modified with keyframe statement
+    
     2.2 Image: It has three public properties that can be modified via Keyframe: Scale, PositionX and PositionY
+    
 3. DataPrimitives: 
+
     3.1 Strings: Anything in double quotes is string.
+    
     3.2 Integers: They are any positive integer.
+    
 4. There are four types of Statements implemented right now: new, insert, keyframe, save. Every Statement must end with a semicolon.
+
     4.1 ***New***: It creates a new object
     Syntax - 
+    
     ***new [AnyObjType] *variable name* = ((dimesionX_INT, dimensionY_INT), AttributeOfTheObject)***
+    
     where the attributeOfTheObject is page number count if the onject is a BookType or a StringType containing the filepath if the object is imageType.
+    
     4.2 ***Insert***: It inserts a image in a book
     Syntax - 
+    
     ***insert [Page ObjType variable] [Book ObjType variable] from page StartPage_Numeber_INT to EndPageNumber_INT  at (positionX_INT, positionY_INT)***
+    
     4.3 ***Keyframe***: It modifies some modifiable property of some object over a range of pages in a liner way. Currently only images properties can be modified.
     Syntax - 
+    
     ***keyframe [Page ObjType variable] [Book ObjType variable] [Property Name Keyword] (startPageNumber, startPropertyValue) to (endPageNumber, endPropertyValue)***
     Note that only the pages that contain the specified image will be changed.
+    
     4.4  ***Save***: It takes a book and renders it as a pdf.
     Syntax - 
     ***save [Book ObjType variable] outputNameString***
