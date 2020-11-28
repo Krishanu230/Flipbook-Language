@@ -252,9 +252,69 @@ func (p *Parser) parseKeyFrameStatement() *ast.KeyframeStatement {
 	}
 	st.Property = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
-	for !p.curTokenIs(token.SEMICOLON) {
-		p.nextToken()
+	if !p.expectPeek(token.LBRACKET) {
+		return nil
 	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	val := p.parseIntegerLiteral()
+	if val != nil {
+		st.StartPage = val
+	} else {
+		return nil
+	}
+	if !p.expectPeek(token.COMMA) {
+		return nil
+	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+
+	val = p.parseIntegerLiteral()
+	if val != nil {
+		st.StartProperty = val
+	} else {
+		return nil
+	}
+
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.TO) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACKET) {
+		return nil
+	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+	val = p.parseIntegerLiteral()
+	if val != nil {
+		st.EndPage = val
+	} else {
+		return nil
+	}
+	if !p.expectPeek(token.COMMA) {
+		return nil
+	}
+	if !p.expectPeek(token.INT) {
+		return nil
+	}
+
+	val = p.parseIntegerLiteral()
+	if val != nil {
+		st.EndProperty = val
+	} else {
+		return nil
+	}
+
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+
 	return st
 }
 
@@ -266,6 +326,10 @@ func (p *Parser) parseSaveStatement() *ast.SaveStatement {
 	}
 	st.Book = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
+	if !(p.expectPeek(token.FILENAME)) {
+		return nil
+	}
+	st.OutputName = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 	for !p.curTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}

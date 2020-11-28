@@ -4,6 +4,9 @@ import (
 	"Flipbook/ast"
 	"Flipbook/object"
 	"fmt"
+	"strconv"
+
+	"github.com/signintech/gopdf"
 )
 
 var (
@@ -27,6 +30,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.InsertStatement:
 		val := evalInsert(node, env)
+		if isError(val) {
+			return val
+		}
+
+	case *ast.KeyframeStatement:
+		val := evalKeyframe(node, env)
+		if isError(val) {
+			return val
+		}
+
+	case *ast.SaveStatement:
+		val := evalSave(node, env)
 		if isError(val) {
 			return val
 		}
@@ -88,7 +103,7 @@ func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object
 	posx := inp.PositionX.Value
 	posy := inp.PositionY.Value
 
-	for i := pgs; i <= pge; i++ {
+	for i := pgs - 1; i <= pge-1; i++ {
 		imgprop := object.ImageProperty{
 			Image: *img,
 			Scale: 100,
@@ -99,6 +114,88 @@ func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object
 		modPage := append(orgPage, imgprop)
 		book.Pages[i] = object.PageProperty{ImagesProps: modPage}
 	}
+	return &object.Null{}
+}
+
+func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Object {
+	r := evalIdentifier(inp.Image, env)
+	img, ok := r.(*object.Image)
+	if !ok {
+		return r //if not okay the img contains error object
+	}
+	r2 := evalIdentifier(inp.Book, env)
+	book, ok := r2.(*object.Book)
+	if !ok {
+		return r2 //if not okay the img contains error object
+	}
+
+	prop := inp.Property.Value
+	pgs := inp.StartPage.Value
+	pge := inp.EndPage.Value
+	sProp := inp.StartProperty.Value
+	eProp := inp.EndProperty.Value
+
+	delProp := eProp - sProp
+	delPgCount := pge - pgs + 1
+	slope := int(delProp / delPgCount)
+
+	for i := pgs - 1; i < pge-1; i++ {
+		for imgNo, imgitr := range book.Pages[i].ImagesProps {
+			if imgitr.Image.Filename == img.Filename {
+				switch prop {
+				case "scale":
+					orgImg := imgitr
+					orgImg.Scale = sProp + slope*(i)
+					println("NewScale")
+					println(orgImg.Scale)
+					book.Pages[i].ImagesProps[imgNo] = orgImg
+				}
+			}
+
+		}
+	}
+
+	return &object.Null{}
+}
+
+func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
+	r := evalIdentifier(inp.Book, env)
+	book, ok := r.(*object.Book)
+	if !ok {
+		return r
+	}
+	fname := inp.OutputName.Value
+	pw := book.DimX
+	ph := book.DimY
+
+	pdf := gopdf.GoPdf{}
+	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(pw), H: float64(ph)}})
+	for pno, page := range book.Pages {
+		if pno == 0 {
+			continue
+		}
+		pdf.AddPage()
+		for _, img := range page.ImagesProps {
+			imgpath := img.Image.Filename
+			iw := int(img.Image.DimX * (0))
+			ih := int(img.Image.DimX * (0))
+
+			if (iw > pw) || (ih > ph) {
+				println("ERROR1")
+				return newError("Image " + fname + " size larger than the page " + strconv.Itoa(pno))
+			}
+			pdf.Image(imgpath, float64(iw), float64(ih), nil)
+
+			ix := img.PosX
+			iy := img.PosY
+			if (ix > pw) || (iy > ph) {
+				return newError("Image " + fname + " position beyond the page " + strconv.Itoa(pno))
+			}
+			pdf.SetX(0)
+			pdf.SetY(0)
+		}
+	}
+	pdf.WritePdf(fname)
 	return &object.Null{}
 }
 

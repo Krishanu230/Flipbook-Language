@@ -1,6 +1,7 @@
 package object
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -53,6 +54,14 @@ type Book struct {
 func (e *Book) Type() ObjectType { return BOOK_OBJ }
 func (e *Book) Inspect() string {
 	return "Bookdim: " + strconv.Itoa(e.DimX) + ", " + strconv.Itoa(e.DimY) + " PagesCount: " + strconv.Itoa(e.CountPages)
+
+}
+func (e *Book) PrintPagesMetadata() {
+	for _, page := range e.Pages {
+		for _, img := range page.ImagesProps {
+			fmt.Printf("Image Name: %s, Scale: %d, PosX: %d, PosY: %d", img.Image.Filename, img.Scale, img.PosX, img.PosY)
+		}
+	}
 }
 
 func NewBook(dimX int, dimY int, pCount string) *Book {
@@ -61,7 +70,7 @@ func NewBook(dimX int, dimY int, pCount string) *Book {
 	i := 0
 	for i < pcnt {
 		blankPage := []ImageProperty{}
-		pages =append(pages, PageProperty{ImagesProps: blankPage})
+		pages = append(pages, PageProperty{ImagesProps: blankPage})
 		i += 1
 	}
 	b := &Book{

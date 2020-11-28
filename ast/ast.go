@@ -87,19 +87,19 @@ type KeyframeStatement struct {
 	Image         *Identifier
 	Book          *Identifier
 	Property      *Identifier
-	StartPage     *Identifier
-	StartProperty *Identifier
-	EndPage       *Identifier
-	EndProperty   *Identifier
+	StartPage     *IntegerLiteral
+	StartProperty *IntegerLiteral
+	EndPage       *IntegerLiteral
+	EndProperty   *IntegerLiteral
 }
 
 func (kfs *KeyframeStatement) statementNode()       {}
 func (kfs *KeyframeStatement) TokenLiteral() string { return kfs.Token.Literal }
 
 type SaveStatement struct {
-	Token token.Token
-	Book  *Identifier
-	//OutputPath *Identifier
+	Token      token.Token
+	Book       *Identifier
+	OutputName *Identifier
 }
 
 func (svs *SaveStatement) statementNode()       {}

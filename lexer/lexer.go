@@ -94,10 +94,10 @@ func (l *Lexer) readFilename() string {
 	if len(split) != 2 {
 		return ""
 	}
-	if !(split[1] == "jpeg" || split[1] == "png" || split[1] == "jpg") {
+	if !(split[1] == "jpeg" || split[1] == "png" || split[1] == "jpg" || split[1] == "pdf") {
 		return ""
 	}
-	return l.input[prevPos:l.prevPosition]
+	return l.input[prevPos+1 : l.prevPosition]
 }
 func (l *Lexer) readIdentifier() string {
 	prevPos := l.prevPosition
