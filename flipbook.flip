@@ -1,5 +1,7 @@
-new book bookone = ((1600,1600), 20);
-new image img = ((100,100), "melon.png");
-insert img bookone from page 1 to 20 at (0,0);
-keyframe img bookone scale (1,5) to (15,100);
+new book bookone = ((1600,1600), 25);
+new image newton = ((100,100), "newton.png");
+insert newton bookone from page 1 to 25 at (600,1270);
+new image melon = ((100,100), "melon.png");
+insert melon bookone from page 1 to 25 at (600,0);
+keyframe melon bookone positionY (1,0) to (25, 1000);
 save bookone "out.pdf";

@@ -142,7 +142,7 @@ func (p *Parser) parseSetStatement() *ast.SetStatement {
 		return nil
 	}
 	st.Target = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-	if !p.expectPeek(token.SCALE, token.POSITION) {
+	if !p.expectPeek(token.SCALE, token.POSITIONX) {
 		return nil
 	}
 	st.Property = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
@@ -247,7 +247,7 @@ func (p *Parser) parseKeyFrameStatement() *ast.KeyframeStatement {
 	}
 	st.Book = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
-	if !p.expectPeek(token.SCALE, token.POSITION) {
+	if !p.expectPeek(token.SCALE, token.POSITIONX, token.POSITIONY) {
 		return nil
 	}
 	st.Property = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
@@ -314,7 +314,9 @@ func (p *Parser) parseKeyFrameStatement() *ast.KeyframeStatement {
 	if !p.expectPeek(token.RBRACKET) {
 		return nil
 	}
-
+	if !p.expectPeek(token.SEMICOLON) {
+		return nil
+	}
 	return st
 }
 
@@ -330,8 +332,8 @@ func (p *Parser) parseSaveStatement() *ast.SaveStatement {
 		return nil
 	}
 	st.OutputName = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-	for !p.curTokenIs(token.SEMICOLON) {
-		p.nextToken()
+	if !p.expectPeek(token.SEMICOLON) {
+		return nil
 	}
 	return st
 }

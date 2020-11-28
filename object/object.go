@@ -57,7 +57,8 @@ func (e *Book) Inspect() string {
 
 }
 func (e *Book) PrintPagesMetadata() {
-	for _, page := range e.Pages {
+	for i, page := range e.Pages {
+		fmt.Printf("\nPage no %d", i)
 		for _, img := range page.ImagesProps {
 			fmt.Printf("Image Name: %s, Scale: %d, PosX: %d, PosY: %d", img.Image.Filename, img.Scale, img.PosX, img.PosY)
 		}

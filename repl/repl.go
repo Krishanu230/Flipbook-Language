@@ -15,7 +15,6 @@ func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 	for {
-		fmt.Printf(">>")
 		scanned := scanner.Scan()
 		if !scanned {
 			return
@@ -29,7 +28,6 @@ func Start(in io.Reader, out io.Writer) {
 			printParserErrors(out, p.Errors())
 			continue
 		}
-		fmt.Printf(program.TokenLiteral())
 		evaluated := evaluator.Eval(program, env)
 
 		if evaluated != nil {

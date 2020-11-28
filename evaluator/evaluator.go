@@ -62,7 +62,6 @@ func evalStatements(sts []ast.Statement, env *object.Environment) object.Object 
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if ok {
-		println(val.Inspect())
 		return val
 	}
 	return newError("identifier not found: " + node.Value)
@@ -114,6 +113,7 @@ func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object
 		modPage := append(orgPage, imgprop)
 		book.Pages[i] = object.PageProperty{ImagesProps: modPage}
 	}
+	//book.PrintPagesMetadata()
 	return &object.Null{}
 }
 
@@ -146,8 +146,14 @@ func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Ob
 				case "scale":
 					orgImg := imgitr
 					orgImg.Scale = sProp + slope*(i)
-					println("NewScale")
-					println(orgImg.Scale)
+					book.Pages[i].ImagesProps[imgNo] = orgImg
+				case "positionX":
+					orgImg := imgitr
+					orgImg.PosX = sProp + slope*(i)
+					book.Pages[i].ImagesProps[imgNo] = orgImg
+				case "positionY":
+					orgImg := imgitr
+					orgImg.PosY = sProp + slope*(i)
 					book.Pages[i].ImagesProps[imgNo] = orgImg
 				}
 			}
@@ -171,30 +177,26 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	pdf := gopdf.GoPdf{}
 	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(pw), H: float64(ph)}})
 	for pno, page := range book.Pages {
-		if pno == 0 {
-			continue
-		}
 		pdf.AddPage()
 		for _, img := range page.ImagesProps {
 			imgpath := img.Image.Filename
-			iw := int(img.Image.DimX * (0))
+			/*iw := int(img.Image.DimX * (0))
 			ih := int(img.Image.DimX * (0))
 
 			if (iw > pw) || (ih > ph) {
 				println("ERROR1")
 				return newError("Image " + fname + " size larger than the page " + strconv.Itoa(pno))
-			}
-			pdf.Image(imgpath, float64(iw), float64(ih), nil)
-
+			}*/
 			ix := img.PosX
 			iy := img.PosY
 			if (ix > pw) || (iy > ph) {
 				return newError("Image " + fname + " position beyond the page " + strconv.Itoa(pno))
 			}
-			pdf.SetX(0)
-			pdf.SetY(0)
+			pdf.Image(imgpath, float64(ix), float64(iy), nil)
 		}
+
 	}
+
 	pdf.WritePdf(fname)
 	return &object.Null{}
 }
