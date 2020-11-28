@@ -76,7 +76,15 @@ Lets Run it:
 [![Final output]](https://www.youtube.com/watch?v=ulpEuGnCMP8)
 [![Walkthrough Demo]](https://www.youtube.com/watch?v=U1MMO5FGT9Q)
 
+KeyWords= {	new, at, to, set, image, book, scale, insert, from, page, keyframe,, save, positionX, positionY}
 
+##Points to note
+1. Objective of the language: The language should be english like and intutive, animation properties should be flexible. Should easily be extensible.
+2. Why not a parser and lexer generator?: I assumed that the point of this excercise is to see us code a framework. Parsing and lexical analysis are the most intresting part and using a generator would I think defeat the purpose of the excercise. Furthermore, I need to learn a different schema to write my specification if I want to use a generator. I'd first try to get my hands dirty with making parsers and lexical analiser by myself.
+
+##Extending the language:
+1. Adding more lexical rules like allowing characters etc: First register the toke in token.go and add the rules in lexer.go
+2. Adding More Statements: First define the ast node for your new statement in ast.go, then add the parsing rules in parser.go and finally add the evaluation logic in evaluator.go. If required you can also create new object types in object.go
 
 ##ToDo:
 1. Compelete the document: Due to the limitation of time, The documentation is not very resourceful. 
