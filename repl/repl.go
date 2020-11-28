@@ -1,14 +1,15 @@
 package repl
 
 import (
-	"Flipbook/evaluator"
-	"Flipbook/lexer"
-	"Flipbook/object"
-	"Flipbook/parser"
-	"Flipbook/token"
 	"bufio"
 	"fmt"
 	"io"
+
+	"github.com/Krishanu230/Flipbook-Language/evaluator"
+	"github.com/Krishanu230/Flipbook-Language/lexer"
+	"github.com/Krishanu230/Flipbook-Language/object"
+	"github.com/Krishanu230/Flipbook-Language/parser"
+	"github.com/Krishanu230/Flipbook-Language/token"
 )
 
 func Start(in io.Reader, out io.Writer) {

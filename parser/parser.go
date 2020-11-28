@@ -1,11 +1,12 @@
 package parser
 
 import (
-	"Flipbook/ast"
-	"Flipbook/lexer"
-	"Flipbook/token"
 	"fmt"
 	"strconv"
+
+	"github.com/Krishanu230/Flipbook-Language/ast"
+	"github.com/Krishanu230/Flipbook-Language/lexer"
+	"github.com/Krishanu230/Flipbook-Language/token"
 )
 
 type Parser struct {

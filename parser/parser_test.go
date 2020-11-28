@@ -1,9 +1,10 @@
 package parser
 
 import (
-	"Flipbook/ast"
-	"Flipbook/lexer"
 	"testing"
+
+	"github.com/Krishanu230/Flipbook-Language/ast"
+	"github.com/Krishanu230/Flipbook-Language/lexer"
 )
 
 func TestNewStatements(t *testing.T) {

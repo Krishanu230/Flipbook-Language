@@ -1,8 +1,9 @@
 package lexer
 
 import (
-	"Flipbook/token"
 	"strings"
+
+	"github.com/Krishanu230/Flipbook-Language/token"
 )
 
 type Lexer struct {

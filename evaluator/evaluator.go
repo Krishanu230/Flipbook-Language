@@ -1,10 +1,11 @@
 package evaluator
 
 import (
-	"Flipbook/ast"
-	"Flipbook/object"
 	"fmt"
 	"strconv"
+
+	"github.com/Krishanu230/Flipbook-Language/ast"
+	"github.com/Krishanu230/Flipbook-Language/object"
 
 	"github.com/signintech/gopdf"
 )

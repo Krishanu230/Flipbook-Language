@@ -1,8 +1,9 @@
 package main
 
 import (
-	"Flipbook/repl"
 	"os"
+
+	"github.com/Krishanu230/Flipbook-Language/repl"
 )
 
 func main() {

@@ -1,8 +1,9 @@
 package lexer
 
 import (
-	"Flipbook/token"
 	"testing"
+
+	"github.com/Krishanu230/Flipbook-Language/token"
 )
 
 func TestNextToken(t *testing.T) {

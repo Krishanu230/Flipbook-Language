@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"Flipbook/token"
+	"github.com/Krishanu230/Flipbook-Language/token"
 )
 
 type Node interface {
