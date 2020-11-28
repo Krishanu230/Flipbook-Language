@@ -73,7 +73,10 @@ save bookone "out.pdf";
 ```
 
 Lets Run it:
-*to insert a video*
+[![Final output]](https://www.youtube.com/watch?v=ulpEuGnCMP8)
+[![Walkthrough Demo]](https://www.youtube.com/watch?v=U1MMO5FGT9Q)
+
+
 
 ##ToDo:
 1. Compelete the document: Due to the limitation of time, The documentation is not very resourceful. 
