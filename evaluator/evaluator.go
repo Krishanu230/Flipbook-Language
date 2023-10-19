@@ -236,7 +236,7 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	for pno, page := range book.Pages {
 		pdf.AddPage()
 		for _, img := range page.ImagesProps {
-			imgpath := img.Image.Filename
+			imgpath := img.Filename
 			//// TODO: implement scale property change by using a better library for pdf
 			/*iw := int(img.Image.DimX * (0))
 			ih := int(img.Image.DimX * (0))
