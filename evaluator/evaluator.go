@@ -7,6 +7,16 @@ import (
 	"github.com/Krishanu230/Flipbook-Language/ast"
 	"github.com/Krishanu230/Flipbook-Language/object"
 
+	"github.com/disintegration/imaging"
+)
+
+func SwirlEffect(pages []object.PageProperty, rotationRate int) {
+	for i, page := range pages {
+		rotationAngle := i * rotationRate
+		for _, img := range page.ImagesProps {
+			img.Image = imaging.Rotate(img.Image, float64(rotationAngle), color.Transparent)
+		}
+	}
 	"github.com/signintech/gopdf"
 )
 
@@ -14,7 +24,7 @@ var (
 	NULL = &object.Null{}
 )
 
-//eval a ast node. recursive nature
+// eval a ast node. recursive nature
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
 
@@ -42,6 +52,21 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return val
 		}
 
+	case *ast.SwirlEffectStatement:
+		val := evalSwirlEffect(node, env)
+		if isError(val) {
+			return val
+		}
+	}
+	
+	func evalSwirlEffect(node *ast.SwirlEffectStatement, env *object.Environment) object.Object {
+	r := evalIdentifier(node.Book, env)
+	book, ok := r.(*object.Book)
+	if !ok {
+		return r
+	}
+	SwirlEffect(book.Pages, node.RotationRate.Value)
+	return &object.Null{}
 	case *ast.SaveStatement:
 		val := evalSave(node, env)
 		if isError(val) {
@@ -51,7 +76,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	return nil
 }
 
-//eval a bunch of statements by passing them to Eval()
+// eval a bunch of statements by passing them to Eval()
 func evalStatements(sts []ast.Statement, env *object.Environment) object.Object {
 	var result object.Object
 
@@ -62,7 +87,7 @@ func evalStatements(sts []ast.Statement, env *object.Environment) object.Object 
 	return result
 }
 
-//resolve an identifier
+// resolve an identifier
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if ok {
@@ -71,7 +96,7 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	return newError("identifier not found: " + node.Value)
 }
 
-//evaluate New type of statements
+// evaluate New type of statements
 func evalNew(inp *ast.NewStatement, env *object.Environment) object.Object {
 	st := *inp
 	if st.DType.Value == "image" {
@@ -89,7 +114,7 @@ func evalNew(inp *ast.NewStatement, env *object.Environment) object.Object {
 	return &object.Null{}
 }
 
-//evaluate Insert statements
+// evaluate Insert statements
 func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object {
 	//env.Print()
 	r := evalIdentifier(inp.Image, env)
@@ -125,7 +150,7 @@ func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object
 	return &object.Null{}
 }
 
-//evaluate keyframe statements
+// evaluate keyframe statements
 func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Object {
 	r := evalIdentifier(inp.Image, env)
 	img, ok := r.(*object.Image)
@@ -177,8 +202,27 @@ func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Ob
 }
 
 func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
+	ix := 0
+	iy := 0
 	r := evalIdentifier(inp.Book, env)
 	book, ok := r.(*object.Book)
+	if !ok {
+		return r
+	}
+	imgObj := evalIdentifier(inp.Image, env)
+	img, ok := imgObj.(*object.Image)
+	if !ok {
+		return imgObj
+	}
+	pdf = gopdf.GoPdf{}
+	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(book.DimX), H: float64(book.DimY)}})
+	for pno, page := range book.Pages {
+		pdf.AddPage()
+		for _, img := range page.ImagesProps {
+			rotatedImg := img.Image
+			pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
+		}
+	}
 	if !ok {
 		return r
 	}
@@ -192,7 +236,7 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	for pno, page := range book.Pages {
 		pdf.AddPage()
 		for _, img := range page.ImagesProps {
-			imgpath := img.Image.Filename
+			imgpath := img.Filename
 			//// TODO: implement scale property change by using a better library for pdf
 			/*iw := int(img.Image.DimX * (0))
 			ih := int(img.Image.DimX * (0))
@@ -201,8 +245,8 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 				println("ERROR1")
 				return newError("Image " + fname + " size larger than the page " + strconv.Itoa(pno))
 			}*/
-			ix := img.PosX
-			iy := img.PosY
+			ix = img.PosX
+			iy = img.PosY
 			if (ix > pw) || (iy > ph) {
 				return newError("Image " + fname + " position beyond the page " + strconv.Itoa(pno))
 			}
@@ -215,7 +259,7 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	return &object.Null{}
 }
 
-//Helper Functions
+// Helper Functions
 func isError(obj object.Object) bool {
 	if obj != nil {
 		return obj.Type() == object.ERROR_OBJ

@@ -21,6 +21,10 @@ go run main.go flipbook.flip
 
 ## Language Design
 
+5. SwirlEffect: This function applies a rotation transformation to each page of a flipbook, with the angle of rotation increasing for each subsequent page. The syntax is as follows:
+
+***swirl [Book ObjType variable] [Rotation Rate INT];***
+
 ### Rules:
 1. There are two type of objects in this language: Book and Image.
 
@@ -36,7 +40,7 @@ go run main.go flipbook.flip
 
     3.2 Integers: They are any positive integer.
 
-4. There are four types of Statements implemented right now: new, insert, keyframe, save. Every Statement must end with a semicolon.
+4. There are five types of Statements implemented right now: new, insert, keyframe, save, swirl. Every Statement must end with a semicolon.
 
     4.1 ***New***: It creates a new object
     Syntax -
@@ -61,7 +65,16 @@ go run main.go flipbook.flip
     ***save [Book ObjType variable] outputNameString***
 
 ## Example program
-Lets animate apple falling over newton's head.
+Lets animate apple falling over newton's head with a swirl effect.
+```
+new book bookone = ((1600,1600), 25);
+new image newton = ((100,100), "newton.png");
+insert newton bookone from page 1 to 25 at (600,1270);
+new image melon = ((100,100), "melon.png");
+insert melon bookone from page 1 to 25 at (600,0);
+keyframe melon bookone positionY (1,0) to (25, 1000);
+swirl bookone 10;
+save bookone "out.pdf";
 ```
 new book bookone = ((1600,1600), 25);
 new image newton = ((100,100), "newton.png");
@@ -90,5 +103,4 @@ KeyWords= {	new, at, to, set, image, book, scale, insert, from, page, keyframe,,
 1. Compelete the document: Due to the limitation of time, The documentation is not very resourceful.
 2.Clean Up the Code: Due to the same reason, I couldnt get the chance to properly refactor code and comment it.
 3. Add Expression pevaluation via Pratt's Parser technique
-4. Add an analouge of Functions as Effects like swirl
-5. Add more properties like opacity and more statements like 'set'.
+4. Add more properties like opacity and more statements like 'set'.
