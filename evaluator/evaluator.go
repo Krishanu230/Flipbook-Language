@@ -7,7 +7,6 @@ import (
 
 	"github.com/Krishanu230/Flipbook-Language/ast"
 	"github.com/Krishanu230/Flipbook-Language/object"
-	"image/color"
 
 	"github.com/disintegration/imaging"
 	"github.com/signintech/gopdf"
@@ -197,7 +196,7 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	if !ok {
 		return imgObj
 	}
-	pdf := gopdf.GoPdf{}
+	pdf = gopdf.GoPdf{}
 	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(book.DimX), H: float64(book.DimY)}})
 	rotatedImg := imaging.Rotate(img.Image, float64(img.Rotation), color.Transparent)
 	pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
