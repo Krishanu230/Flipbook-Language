@@ -8,6 +8,15 @@ import (
 	"github.com/Krishanu230/Flipbook-Language/object"
 
 	"github.com/disintegration/imaging"
+)
+
+func SwirlEffect(pages []object.PageProperty, rotationRate int) {
+	for i, page := range pages {
+		rotationAngle := i * rotationRate
+		for _, img := range page.ImagesProps {
+			img.Image = imaging.Rotate(img.Image, float64(rotationAngle), color.Transparent)
+		}
+	}
 	"github.com/signintech/gopdf"
 )
 
@@ -48,6 +57,16 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
+	}
+	
+	func evalSwirlEffect(node *ast.SwirlEffectStatement, env *object.Environment) object.Object {
+	r := evalIdentifier(node.Book, env)
+	book, ok := r.(*object.Book)
+	if !ok {
+		return r
+	}
+	SwirlEffect(book.Pages, node.RotationRate.Value)
+	return &object.Null{}
 	case *ast.SaveStatement:
 		val := evalSave(node, env)
 		if isError(val) {
@@ -197,9 +216,13 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	}
 	pdf = gopdf.GoPdf{}
 	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(book.DimX), H: float64(book.DimY)}})
-	rotatedImg := imaging.Rotate(img.Image, float64(img.Rotation), color.Transparent)
-	pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
-	book, ok := r.(*object.Book)
+	for pno, page := range book.Pages {
+		pdf.AddPage()
+		for _, img := range page.ImagesProps {
+			rotatedImg := img.Image
+			pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
+		}
+	}
 	if !ok {
 		return r
 	}
