@@ -3,6 +3,7 @@ package evaluator
 import (
 	"fmt"
 	"strconv"
+	"image/color"
 
 	"github.com/Krishanu230/Flipbook-Language/ast"
 	"github.com/Krishanu230/Flipbook-Language/object"
@@ -183,6 +184,8 @@ func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Ob
 }
 
 func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
+	ix := 0
+	iy := 0
 	r := evalIdentifier(inp.Book, env)
 	book, ok := r.(*object.Book)
 	if !ok {
@@ -197,7 +200,7 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(book.DimX), H: float64(book.DimY)}})
 	rotatedImg := imaging.Rotate(img.Image, float64(img.Rotation), color.Transparent)
 	pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
-	book, ok := r.(*object.Book)
+	book, ok = r.(*object.Book)
 	if !ok {
 		return r
 	}
@@ -220,8 +223,8 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 				println("ERROR1")
 				return newError("Image " + fname + " size larger than the page " + strconv.Itoa(pno))
 			}*/
-			ix := img.PosX
-			iy := img.PosY
+			ix = img.PosX
+			iy = img.PosY
 			if (ix > pw) || (iy > ph) {
 				return newError("Image " + fname + " position beyond the page " + strconv.Itoa(pno))
 			}
