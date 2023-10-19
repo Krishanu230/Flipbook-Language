@@ -2,21 +2,21 @@ package evaluator
 
 import (
 	"fmt"
-	"strconv"
 	"image/color"
+	"strconv"
 
 	"github.com/Krishanu230/Flipbook-Language/ast"
 	"github.com/Krishanu230/Flipbook-Language/object"
 
-	"github.com/signintech/gopdf"
 	"github.com/disintegration/imaging"
+	"github.com/signintech/gopdf"
 )
 
 var (
 	NULL = &object.Null{}
 )
 
-//eval a ast node. recursive nature
+// eval a ast node. recursive nature
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
 
@@ -45,20 +45,20 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 	case *ast.SwirlEffectStatement:
-			val := evalSwirlEffect(node, env)
-			if isError(val) {
-				return val
-			}
+		val := evalSwirlEffect(node, env)
+		if isError(val) {
+			return val
+		}
 	case *ast.SaveStatement:
-			val := evalSave(node, env)
-			if isError(val) {
-				return val
-			}
+		val := evalSave(node, env)
+		if isError(val) {
+			return val
+		}
 	} //end of switch
 	return nil
 }
 
-//eval a bunch of statements by passing them to Eval()
+// eval a bunch of statements by passing them to Eval()
 func evalStatements(sts []ast.Statement, env *object.Environment) object.Object {
 	var result object.Object
 
@@ -69,7 +69,7 @@ func evalStatements(sts []ast.Statement, env *object.Environment) object.Object 
 	return result
 }
 
-//resolve an identifier
+// resolve an identifier
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if ok {
@@ -78,7 +78,7 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	return newError("identifier not found: " + node.Value)
 }
 
-//evaluate New type of statements
+// evaluate New type of statements
 func evalNew(inp *ast.NewStatement, env *object.Environment) object.Object {
 	st := *inp
 	if st.DType.Value == "image" {
@@ -96,7 +96,7 @@ func evalNew(inp *ast.NewStatement, env *object.Environment) object.Object {
 	return &object.Null{}
 }
 
-//evaluate Insert statements
+// evaluate Insert statements
 func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object {
 	//env.Print()
 	r := evalIdentifier(inp.Image, env)
@@ -132,7 +132,7 @@ func evalInsert(inp *ast.InsertStatement, env *object.Environment) object.Object
 	return &object.Null{}
 }
 
-//evaluate keyframe statements
+// evaluate keyframe statements
 func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Object {
 	r := evalIdentifier(inp.Image, env)
 	img, ok := r.(*object.Image)
@@ -237,7 +237,7 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	return &object.Null{}
 }
 
-//Helper Functions
+// Helper Functions
 func isError(obj object.Object) bool {
 	if obj != nil {
 		return obj.Type() == object.ERROR_OBJ
