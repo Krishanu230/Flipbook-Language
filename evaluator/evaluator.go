@@ -2,7 +2,6 @@ package evaluator
 
 import (
 	"fmt"
-	"image/color"
 	"strconv"
 
 	"github.com/Krishanu230/Flipbook-Language/ast"
@@ -200,7 +199,7 @@ func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
 	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(book.DimX), H: float64(book.DimY)}})
 	rotatedImg := imaging.Rotate(img.Image, float64(img.Rotation), color.Transparent)
 	pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
-	book, ok = r.(*object.Book)
+	book, ok := r.(*object.Book)
 	if !ok {
 		return r
 	}
