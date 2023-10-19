@@ -7,6 +7,7 @@ import (
 
 	"github.com/Krishanu230/Flipbook-Language/ast"
 	"github.com/Krishanu230/Flipbook-Language/object"
+	"image/color"
 
 	"github.com/disintegration/imaging"
 	"github.com/signintech/gopdf"
