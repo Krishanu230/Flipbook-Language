@@ -8,6 +8,7 @@ import (
 	"github.com/Krishanu230/Flipbook-Language/object"
 
 	"github.com/signintech/gopdf"
+	"github.com/disintegration/imaging"
 )
 
 var (
@@ -42,11 +43,16 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return val
 		}
 
+	case *ast.SwirlEffectStatement:
+			val := evalSwirlEffect(node, env)
+			if isError(val) {
+				return val
+			}
 	case *ast.SaveStatement:
-		val := evalSave(node, env)
-		if isError(val) {
-			return val
-		}
+			val := evalSave(node, env)
+			if isError(val) {
+				return val
+			}
 	} //end of switch
 	return nil
 }
@@ -177,7 +183,8 @@ func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Ob
 }
 
 func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
-	r := evalIdentifier(inp.Book, env)
+	rotatedImg := imaging.Rotate(img.Image, float64(img.Rotation), color.Transparent)
+	pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
 	book, ok := r.(*object.Book)
 	if !ok {
 		return r
