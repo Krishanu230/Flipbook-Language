@@ -183,6 +183,18 @@ func evalKeyframe(inp *ast.KeyframeStatement, env *object.Environment) object.Ob
 }
 
 func evalSave(inp *ast.SaveStatement, env *object.Environment) object.Object {
+	r := evalIdentifier(inp.Book, env)
+	book, ok := r.(*object.Book)
+	if !ok {
+		return r
+	}
+	imgObj := evalIdentifier(inp.Image, env)
+	img, ok := imgObj.(*object.Image)
+	if !ok {
+		return imgObj
+	}
+	pdf := gopdf.GoPdf{}
+	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: float64(book.DimX), H: float64(book.DimY)}})
 	rotatedImg := imaging.Rotate(img.Image, float64(img.Rotation), color.Transparent)
 	pdf.Image(rotatedImg, float64(ix), float64(iy), nil)
 	book, ok := r.(*object.Book)
