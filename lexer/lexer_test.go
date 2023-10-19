@@ -41,6 +41,10 @@ func TestNextToken(t *testing.T) {
 		{token.SCALE, "scale"},
 		{token.INT, "10"},
 		{token.SEMICOLON, ";"},
+		{token.SWIRL, "swirl"},
+		{token.IDN, "bookone"},
+		{token.INT, "10"},
+		{token.SEMICOLON, ";"},
 	}
 
 	l := NewLexer(input)
